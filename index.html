@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,16 +7,6 @@
     <link rel="icon" href="images/head.jpeg" type="image/png">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* Theme variables */
-        html[data-theme="light"] {
-            --bg-color: #ffffff;
-            --text-color: #000000;
-            --project-bg: #f8f9fa;
-            --link-color: #0066cc;
-            --link-hover: #004499;
-            --border-color: #dee2e6;
-        }
-
         html[data-theme="dark"] {
             --bg-color: #1a1a1a;
             --text-color: #ffffff;
@@ -26,28 +16,6 @@
             --border-color: #404040;
         }
 
-        /* Theme toggle button */
-        .theme-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px; /* Move to the top-right */
-            padding: 10px 20px;
-            border-radius: 20px;
-            border: none;
-            cursor: pointer;
-            background-color: var(--project-bg);
-            color: var(--text-color);
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            z-index: 1000;
-        }
-
-        .theme-toggle:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-
-        /* Global styles */
         body {
             max-width: 1200px;
             margin: 0 auto;
@@ -58,7 +26,6 @@
             transition: all 0.3s ease;
         }
 
-        /* Header styles */
         .header {
             display: flex;
             justify-content: space-between;
@@ -67,16 +34,20 @@
             padding: 1rem 0;
         }
 
-        /* Profile section */
         .profile-section {
             display: flex;
             gap: 2rem;
             margin-bottom: 3rem;
-            align-items: center; /* Align items vertically */
-            justify-content: center; /* Center horizontally */
+            align-items: center;
+            justify-content: center;
         }
 
-
+        /* .pub-image {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            overflow: hidden;
+        } */
         .profile-image {
             flex-shrink: 0;
             width: 300px;
@@ -96,65 +67,15 @@
             padding-left: 40px;
         }
 
-        /* Projects section */
-        .projects-section {
+        .education, .publications {
             margin-bottom: 3rem;
         }
 
-        .project {
-            display: flex;
-            gap: 2rem;
-            margin-bottom: 2rem;
-            padding: 1rem;
-            border-radius: 8px;
-            background-color: var(--project-bg);
-            transition: all 0.3s ease;
-        }
-
-        .project-image {
-            flex-shrink: 0;
-            width: 200px;
-            display: flex;
-            align-items: flex-start;
-            padding: 1rem;
-        }
-
-        .project-image img {
-            max-width: 100%;
-            height: auto;
-        }
-
-        .project-content {
-            flex: 1;
-        }
-
-        .project-content h4 {
+        .education h2, .publications h2 {
             margin-bottom: 1rem;
             color: var(--text-color);
         }
 
-        .project-content ul {
-            padding-left: 1.2rem;
-            margin-bottom: 0;
-            list-style-type: none;
-        }
-
-        .project-content li {
-            margin-bottom: 0.5rem;
-            color: var(--text-color);
-        }
-
-        /* Education section */
-        .education {
-            margin-bottom: 3rem;
-        }
-
-        .education h2 {
-            margin-bottom: 1rem;
-            color: var(--text-color);
-        }
-
-        /* Footer */
         .footer {
             display: flex;
             justify-content: center;
@@ -168,14 +89,33 @@
             width: 40px;
             height: 40px;
             transition: transform 0.2s;
-            filter: var(--text-color) === '#ffffff' ? 'invert(1)' : 'none';
         }
 
         .footer img:hover {
             transform: scale(1.1);
         }
 
-        /* Links */
+        .divider {
+            border-top: 1px solid var(--border-color);
+            margin: 1rem 0;
+        }
+
+        .publication-content {
+            max-width: 600px;
+        }
+
+        .publication-wrapper {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .video-container img {
+            width: 220px;
+            /* height: 240px; */
+            border-radius: 12px;
+        }
+
         a {
             color: var(--link-color);
             text-decoration: none;
@@ -186,77 +126,16 @@
             color: var(--link-hover);
             text-decoration: underline;
         }
-
-        /* Responsive design */
-        @media (max-width: 768px) {
-            .theme-toggle {
-                position: static;
-                margin-bottom: 20px;
-                display: block;
-                width: fit-content;
-            }
-
-            .profile-section {
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
-            }
-
-            .profile-text {
-                width: 100%;
-                padding: 0 15px;
-            }
-
-            .profile-image {
-                width: 200px;
-            }
-
-            .project {
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
-            }
-
-            .project-image {
-                width: 150px;
-            }
-
-            .header {
-                flex-direction: column;
-                text-align: center;
-            }
-        }
-
-        @media (min-width: 769px) and (max-width: 1024px) {
-            .profile-section {
-                gap: 1.5rem;
-            }
-
-            .profile-text {
-                width: 500px;
-            }
-
-            .profile-image {
-                width: 250px;
-            }
-
-            .project-image {
-                width: 180px;
-            }
-        }
     </style>
 </head>
 <body>
-    <button class="theme-toggle" onclick="toggleTheme()">
-        Switch Theme
-    </button>
 
     <div class="header">
-        <h2>Mahesh Reddy Tapeti</h2>
+        <h2><b>Mahesh Reddy Tapeti</b></h2>
     </div>
 
     <div class="profile-section">
-        <div class="profile-image">
+        <div class="profile-image" >
             <img src="images/img.jpeg" alt="Profile picture">
         </div>
         <div class="profile-text">
@@ -270,32 +149,27 @@
         </div>
     </div>
 
-    <div class="projects-section">
-        <div class="project">
-            <div class="project-image">
-                <img src="images/arm.gif" alt="Robotic arm">
+    <div class="publications">
+        
+        <h2>Publications</h2>
+        <hr class="divider">
+        <div class="publication-wrapper">
+            <div class="video-container">
+                <img src="images/introvideo.gif" alt="Publication GIF">
             </div>
-            <div class="project-content">
-                <h4>Trajectory Generation with Flow-Based Energy Models [<a href="#">Code</a>]</h4>
-                <ol>
-                    <li>Developed a novel multi-modal flow-based model for trajectory generation that transforms random noise into diverse, realistic paths using continuous flow matching, resulting in high-quality trajectory synthesis with multiple viable solutions for each scenario.</li>
-                    <li>Built an energy-based model on top of the multi-modal flow matching network to quantify the generated trajectories based on energy.</li>
-                </ol>
-            </div>
-        </div>
-        <div class="project">
-            <div class="project-image">
-                <img src="images/image.png" alt="Network diagram">
-            </div>
-            <div class="project-content">
-                <h4>Future Depth Map Prediction Using 3D CNNs [<a href="#">Code</a>]</h4>
-                <ol>
-                    <li>Collected object flight demonstrations in the MuJoCo simulator with varying velocity and direction attributes for a diverse set of objects. Designed a 3D CNN network to process depth maps from the first T frames and predict depth maps for T+N frames, enabling fast and efficient future scene prediction.</li>
-                    <li>Improved the network's performance using attention mechanisms, achieving a loss of 1e-3.</li>
-                </ol>
+            <div class="publication-content">
+                <p><strong>DG16M: A Large-Scale Dataset for Dual-Arm Grasping with Force-Optimized Grasps</strong></p>
+                <p>Md Faizal Karim*, Mohammed Saad Hashmi*, Shreya Bollimuntha, <b>Mahesh Reddy Tapeti</b>, Gaurav Singh, Nagamanikandan Govindan, K Madhava Krishna<br><i>Under Review, 2025</i></p>
+                <div>
+                    <button class="btn btn-outline-light">ABS</button>
+                    <button class="btn btn-outline-light"><a href="https://arxiv.org/abs/2503.08358" target="_blank">PAPER</a></button>
+                    <button class="btn btn-outline-light"><a href="https://dg16m.github.io/DG-16M/" target="_blank">WEBSITE</a></button>
+                </div>
             </div>
         </div>
     </div>
+
+    <hr class="divider">
 
     <div class="education">
         <h2>Education</h2>
@@ -308,24 +182,6 @@
         <a href="https://x.com/maheshreddy0299" target="_blank"><img src="images/x.png" alt="X"></a>
         <a href="mailto:maheshreddy0299@gmail.com" target="_blank"><img src="images/mail.png" alt="Email"></a>
     </div>
-
-    <script>
-        function toggleTheme() {
-            const html = document.documentElement;
-            const currentTheme = html.getAttribute('data-theme');
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            html.setAttribute('data-theme', newTheme);
-            
-            // Save theme preference
-            localStorage.setItem('theme', newTheme);
-        }
-
-        // Load saved theme preference
-        document.addEventListener('DOMContentLoaded', () => {
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            document.documentElement.setAttribute('data-theme', savedTheme);
-        });
-    </script>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.6/dist/umd/popper.min.js"></script>
