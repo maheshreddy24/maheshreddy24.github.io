@@ -6,142 +6,26 @@
     <title>Mahesh Reddy</title>
     <link rel="icon" href="images/head.jpeg" type="image/png">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        html[data-theme="dark"] {
-            --bg-color: #1a1a1a;
-            --text-color: #ffffff;
-            --project-bg: #2d2d2d;
-            --link-color: #66b3ff;
-            --link-hover: #99ccff;
-            --border-color: #404040;
-        }
-
-        body {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            transition: all 0.3s ease;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            padding: 1rem 0;
-        }
-
-        .profile-section {
-            display: flex;
-            gap: 2rem;
-            margin-bottom: 3rem;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* .pub-image {
-            width: 300px;
-            height: 300px;
-            border-radius: 50%;
-            overflow: hidden;
-        } */
-        .profile-image {
-            flex-shrink: 0;
-            width: 300px;
-            padding-right: 50px;
-        }
-
-        .profile-image img {
-            width: 100%;
-            height: auto;
-            border-radius: 8px;
-        }
-
-        .profile-text {
-            width: 600px;
-            line-height: 1.6;
-            flex-shrink: 0;
-            padding-left: 40px;
-        }
-
-        .education, .publications {
-            margin-bottom: 3rem;
-        }
-
-        .education h2, .publications h2 {
-            margin-bottom: 1rem;
-            color: var(--text-color);
-        }
-
-        .footer {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            padding: 1rem 0;
-            border-top: 1px solid var(--border-color);
-            margin-top: 2rem;
-        }
-
-        .footer img {
-            width: 40px;
-            height: 40px;
-            transition: transform 0.2s;
-        }
-
-        .footer img:hover {
-            transform: scale(1.1);
-        }
-
-        .divider {
-            border-top: 1px solid var(--border-color);
-            margin: 1rem 0;
-        }
-
-        .publication-content {
-            max-width: 600px;
-        }
-
-        .publication-wrapper {
-            display: flex;
-            align-items: flex-start;
-            gap: 20px;
-        }
-
-        .video-container img {
-            width: 220px;
-            /* height: 240px; */
-            border-radius: 12px;
-        }
-
-        a {
-            color: var(--link-color);
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-
-        a:hover {
-            color: var(--link-hover);
-            text-decoration: underline;
-        }
-    </style>
+    <link rel="stylesheet" href="doc.css">
 </head>
 <body>
-
+    
     <div class="header">
         <h2><b>Mahesh Reddy Tapeti</b></h2>
+        <nav class="nav-menu">
+            <a href="#home" class="nav-link">Home</a>
+            <a href="blogs/blog.html" class="nav-link">Blog</a> 
+        </nav>
     </div>
 
     <div class="profile-section">
-        <div class="profile-image" >
+        <div class="profile-image">
             <img src="images/img.jpeg" alt="Profile picture">
         </div>
         <div class="profile-text">
             <p class="info">
-                I am a undergrad robotics researcher driven by the goal of creating intelligent systems that bridge the gap between human perception and machine efficiency.
-                <br><br>
+                I am a robotics researcher driven by the goal of creating intelligent systems that bridge the gap between human perception and machine efficiency. My journey into robotics began with a simple question: how can we make machines safer and more effective in handling labor-intensive, hazardous tasks while addressing their limitations in perception and adaptability? This curiosity has shaped my academic and professional pursuits.
+                 <br><br>
                 I'm currently at <a href="https://www.zebu.ai/" target="_blank">Zebu Intelligent Systems</a>, as Computer Vision Engineer. Previously Robotics Engineer Intern at <a href="https://www.harvestedlabs.com/" target="_blank">Harvested Robotics</a>.
                 <br><br>
                 I'm always eager to discuss new possibilities in the field. Feel free to connect with me on <a href="https://www.linkedin.com/in/mahesh-reddy-tapeti/" target="_blank">LinkedIn</a>!
@@ -150,7 +34,6 @@
     </div>
 
     <div class="publications">
-        
         <h2>Publications</h2>
         <hr class="divider">
         <div class="publication-wrapper">
@@ -160,7 +43,7 @@
             <div class="publication-content">
                 <p><strong>DG16M: A Large-Scale Dataset for Dual-Arm Grasping with Force-Optimized Grasps</strong></p>
                 <p>Md Faizal Karim*, Mohammed Saad Hashmi*, Shreya Bollimuntha, <b>Mahesh Reddy Tapeti</b>, Gaurav Singh, Nagamanikandan Govindan, K Madhava Krishna<br><i>Under Review, 2025</i></p>
-                <div>
+                <div class="publication-buttons">
                     <button class="btn btn-outline-light">ABS</button>
                     <button class="btn btn-outline-light"><a href="https://arxiv.org/abs/2503.08358" target="_blank">PAPER</a></button>
                     <button class="btn btn-outline-light"><a href="https://dg16m.github.io/DG-16M/" target="_blank">WEBSITE</a></button>
@@ -173,7 +56,7 @@
 
     <div class="education">
         <h2>Education</h2>
-        <a href="https://vnrvjiet.ac.in/" target = "_blank">VNR Vignana Jyothi Engineering and Technology [2021-Present]</a>
+        <a href="https://vnrvjiet.ac.in/" target="_blank">VNR Vignana Jyothi Engineering and Technology [2021-Present]</a>
         <p style="margin-left: 1rem; margin-top: 0.5rem;">Bachelor of Technology, Mechanical Engineering</p>
     </div>
 
