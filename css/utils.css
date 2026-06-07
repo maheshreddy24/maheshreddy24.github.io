@@ -58,17 +58,18 @@
 }
 
 /* Divider */
-/* .divider {
-  border: none;
-  border-top: 1px solid var(--border);
-  margin: var(--section) 0;
-} */
-
 .divider {
   border: none;
   border-top: 1px solid var(--border);
-  margin: 1.5rem 0;
+  margin: var(--section) 0;
 }
+
+.divider_research {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 1 rem 0;
+}
+
 
 /* Inline link */
 .link { color: var(--accent); font-weight: 500; }
