@@ -1,0 +1,97 @@
+/* ─────────────────────────────────────────────
+   UTILITIES & SHARED COMPONENTS
+───────────────────────────────────────────── */
+
+/* Layout wrapper */
+.page-body { padding-top: var(--nav-h); }
+
+.container {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* Section label */
+.section-label {
+  font-family: var(--font-mono);
+  font-size: .68rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  margin-bottom: .75rem;
+}
+
+/* Section heading */
+.section-heading {
+  font-family: var(--font-serif);
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  font-weight: 400;
+  line-height: 1.18;
+  color: var(--ink);
+  margin-bottom: 2.5rem;
+}
+
+/* Tag pill */
+.tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: .62rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  background: var(--tag-bg);
+  color: var(--ink-muted);
+  border: 1px solid var(--border);
+  padding: .18em .55em;
+  border-radius: var(--radius);
+}
+
+.tag--accent {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.tag--red {
+  background: var(--accent-alt);
+  color: #fff;
+  border-color: var(--accent-alt);
+}
+
+/* Divider */
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: var(--section) 0;
+}
+
+/* Inline link */
+.link { color: var(--accent); font-weight: 500; }
+.link:hover { text-decoration: underline; }
+
+/* External arrow */
+.ext::after { content: ' ↗'; font-size: .85em; }
+
+/* Section spacing */
+.section { padding: var(--section) 0; }
+
+/* Footer */
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 2.5rem 0;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: .7rem;
+  color: var(--ink-muted);
+  letter-spacing: .06em;
+}
+
+/* Fade-in on scroll */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity .55s ease, transform .55s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: none;
+}

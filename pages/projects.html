@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Projects — Mahesh Reddy Tapeti</title>
+  <link rel="stylesheet" href="../css/base.css" />
+  <link rel="stylesheet" href="../css/nav.css" />
+  <link rel="stylesheet" href="../css/utils.css" />
+  <link rel="stylesheet" href="../css/pages.css" />
+</head>
+<body class="page-body">
+
+  <div id="nav-placeholder"></div>
+
+  <main class="container">
+
+    <header class="page-header">
+      <p class="section-label">Projects</p>
+      <h1 class="section-heading">Things I've built.</h1>
+      <p style="color:var(--ink-muted);font-size:.9rem;max-width:520px;line-height:1.7">
+        A mix of research tools, open-source libraries, and weekend experiments.
+        Everything is shipped—even the messy ones.
+      </p>
+    </header>
+
+    <div class="projects-grid">
+
+      <div class="project-card reveal">
+        <div class="project-card__top">
+          <span class="project-card__icon">🧠</span>
+          <div class="project-card__links">
+            <a href="https://github.com/maheshreddy24/rlhf" target="_blank" rel="noopener" class="ext">GitHub</a>
+          </div>
+        </div>
+        <div class="project-card__title">rlhf</div>
+        <p class="project-card__desc">
+          Experiments and implementations around Reinforcement Learning from Human Feedback.
+          Covers reward modelling, preference data collection, and policy optimisation
+          techniques for aligning language models to human intent.
+        </p>
+        <div class="project-card__tags">
+          <!-- <span class="tag">Jupyter Notebook</span> -->
+          <span class="tag">RLHF</span>
+          <span class="tag">LLM Alignment</span>
+        </div>
+      </div>
+
+      <div class="project-card reveal">
+        <div class="project-card__top">
+          <span class="project-card__icon">🌐</span>
+          <div class="project-card__links">
+            <a href="https://github.com/maheshreddy24/spatial-vlm" target="_blank" rel="noopener" class="ext">GitHub</a>
+            <span class="tag" style="font-size:.62rem;">★ 2</span>
+          </div>
+        </div>
+        <div class="project-card__title">spatial-vlm</div>
+        <p class="project-card__desc">
+          A vision–language model focused on spatial reasoning and scene understanding.
+          Explores how VLMs can interpret 3D spatial relationships from 2D
+          image inputs for downstream robotic and embodied AI tasks.
+        </p>
+        <div class="project-card__tags">
+          <!-- <span class="tag">Jupyter Notebook</span> -->
+          <span class="tag">VLM</span>
+          <span class="tag">Spatial Reasoning</span>
+        </div>
+      </div>
+
+      <div class="project-card reveal">
+        <div class="project-card__top">
+          <span class="project-card__icon">📦</span>
+          <div class="project-card__links">
+            <a href="https://github.com/maheshreddy24/Knowledge-Distillation" target="_blank" rel="noopener" class="ext">GitHub</a>
+            <span class="tag" style="font-size:.62rem;">★ 1</span>
+          </div>
+        </div>
+        <div class="project-card__title">Knowledge-Distillation</div>
+        <p class="project-card__desc">
+          Implementations of knowledge distillation techniques to compress large neural
+          networks into smaller, faster student models while retaining performance —
+          covering response-based, feature-based, and relation-based distillation.
+        </p>
+        <div class="project-card__tags">
+          <!-- <span class="tag">Jupyter Notebook</span> -->
+          <span class="tag">Model Compression</span>
+          <span class="tag">Deep Learning</span>
+        </div>
+      </div>
+
+    </div>
+
+    <hr class="divider">
+
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <script src="../js/components.js"></script>
+  <script src="../js/nav.js"></script>
+  <script src="../js/reveal.js"></script>
+</body>
+</html>
