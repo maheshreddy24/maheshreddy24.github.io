@@ -58,10 +58,16 @@
 }
 
 /* Divider */
-.divider {
+/* .divider {
   border: none;
   border-top: 1px solid var(--border);
   margin: var(--section) 0;
+} */
+
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 2.5rem 0;
 }
 
 /* Inline link */
