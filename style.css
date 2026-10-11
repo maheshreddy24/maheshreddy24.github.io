@@ -1,0 +1,48 @@
+body {
+  font-family: "Instrument Sans", Arial, Helvetica, sans-serif;
+  font-size: 18px;
+  line-height: 1.45;
+  color: #1a1a1a;
+  background: #f8f2e4;
+  max-width: 46em;
+  margin: 2em auto 4em;
+  padding: 0 1.5em;
+}
+
+body.home { margin-left: 1em; }
+
+a { color: #0000ee; }
+a:visited { color: #551a8b; }
+
+h1 { font-size: 1.8em; margin: 0 0 0.2em; }
+h2 { font-size: 1.3em; margin-top: 1.8em; }
+
+tt, code, pre { font-family: "Courier New", Courier, monospace; font-size: 0.9em; }
+pre { padding: 0.6em 0.8em; border: 1px solid #808080; overflow-x: auto; }
+
+img { max-width: 100%; height: auto; }
+figure img { mix-blend-mode: multiply; }
+
+figure { margin: 1.5em 0; }
+figcaption { font-size: 0.9em; font-style: italic; margin-top: 0.3em; }
+
+div.table { overflow-x: auto; margin: 1em 0; }
+table { border-collapse: collapse; }
+th, td { border: 1px solid #808080; padding: 0.3em 0.6em; text-align: left; vertical-align: top; }
+
+.katex { font-size: 1.1em; }
+.katex-display { overflow-x: auto; overflow-y: hidden; padding: 0.2em 0; }
+
+ul.refs li { margin: 0.3em 0; }
+
+ul.posts { list-style: none; padding: 0; }
+ul.posts li { margin: 0.4em 0; }
+ul.posts tt { margin-right: 1.2em; }
+
+address { font-size: 0.9em; }
+p.note { font-size: 0.85em; }
+
+@media (max-width: 600px) {
+  body, body.home { margin: 1.2em auto 3em; padding: 0 1em; font-size: 17px; }
+  ul.posts tt { display: block; margin: 0; }
+}
