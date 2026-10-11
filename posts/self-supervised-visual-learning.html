@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Self-Supervised Visual Learning &mdash; Mahesh Reddy</title>
+<meta name="description" content="How image and video self-supervised learning evolved: contrastive learning, BYOL, masked autoencoders, DINOv2, I-JEPA, VideoMAE and the V-JEPA series.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap">
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body, {delimiters: [{left: '\\[', right: '\\]', display: true}, {left: '\\(', right: '\\)', display: false}]})"></script>
+</head>
+<body>
+
+<p><a href="../index.html">&larr; Home</a></p>
+
+<h1>Self-Supervised Visual Learning</h1>
+<p><i>Mahesh Reddy &middot; 10 May 2026</i></p>
+
+<hr>
+
+<p>The scale of data on the internet is growing exponentially, yet the vast
+majority of it remains unannotated. Since supervised learning models for
+downstream tasks require labeled data, which is expensive and time-consuming to
+produce, this creates a fundamental bottleneck. Self-supervised learning (SSL)
+directly addresses this problem: how do we leverage the massive amounts of
+unlabeled data available on the internet? There has been significant research in
+this direction, with networks trained under SSL paradigms to exploit
+large-scale, unannotated data. In this article, we focus on image and
+video-based self-supervised learning, tracing how each major work introduced new
+ideas and pushed the field forward.</p>
+
+<p>The goal of any self-supervised learning method is to learn robust
+representations of data such that the same frozen neural network can be reused
+for various downstream tasks without ever having seen annotations during
+pre-training.</p>
+
+<h2>Image SSL Models</h2>
+
+<p>Early works on image self-supervised learning used pseudo-labeling as a
+pretext task, in which multiple augmentations of the same image, such as random
+cropping, rotation, or color distortion, were generated and passed through an
+image encoder. The objective was to minimize the difference between the
+embeddings of the same image augmented views, encouraging the encoder to capture
+high-level, invariant semantic features and ignore superficial low-level
+details.</p>
+
+<p>However, a critical failure mode exists: the network can trivially satisfy
+this objective by outputting a constant vector for every image, causing what is
+known as <i>representational collapse</i>. To prevent this, rather than only
+pulling similar views together, we must also push dissimilar samples apart. This
+is the central idea behind contrastive learning.</p>
+
+<figure>
+  <img src="../img/ssl-fig1.jpg" width="536" height="389"
+    alt="SimCLR diagram: an image x is augmented twice by t and t-prime drawn from the same family, each view passes through encoder f to give representations h_i and h_j, then projection head g to give z_i and z_j, and agreement between z_i and z_j is maximized.">
+  <figcaption>Figure 1: A simple framework for contrastive learning of visual
+    representations. Two separate data augmentation operators are sampled from
+    the same family of augmentations (\(t \sim \mathcal{T}\) and
+    \(t' \sim \mathcal{T}\)) and applied to each data example to obtain two
+    correlated views. A base encoder network \(f(\cdot)\) and a projection head
+    \(g(\cdot)\) are trained to maximize agreement using a contrastive loss.
+    After training is completed, we throw away the projection head \(g(\cdot)\)
+    and use the encoder \(f(\cdot)\) and the representation \(h\) for downstream
+    tasks.</figcaption>
+</figure>
+
+<p>Figure 1 from Chen et al. (2020) <a href="#r1">[1]</a> illustrates a simple
+contrastive learning framework. Given a training sample \(x\), two augmentations
+are sampled from the same augmentation family and applied to produce two
+correlated views. A base encoder \(f(\cdot)\) produces embeddings from these
+views, and a projection head \(g(\cdot)\) maps them into a space where the
+contrastive loss is computed. The training objective maximizes agreement between
+embeddings of the same sample, called <i>positive pairs</i>, while minimizing
+agreement between embeddings of different samples, <i>negative pairs</i>. After
+training, the projection head is discarded and the encoder \(f(\cdot)\) is used
+for downstream tasks via simple linear probing. One practical limitation of this
+approach is its sensitivity to negative pair selection and its requirement for
+large batch sizes to expose the model to a sufficient number of negatives during
+training.</p>
+
+<p>BYOL <a href="#r2">[2]</a> takes a fundamentally different approach,
+dispensing with negative pairs entirely. It introduces two networks: an
+<i>online network</i> and a <i>target network</i>. Both see different augmented
+views of the same image, and the online network is trained to predict the
+representation produced by the target network. To avoid representational
+collapse, which would occur if both networks were updated simultaneously via
+gradient descent, the target network is updated as an exponential moving average
+(EMA) of the online network&rsquo;s weights rather than through direct gradient
+updates. Conceptually, the target network represents a slowly evolving past
+version of the online network, and training can be thought of as continuously
+distilling knowledge from this past version and then surpassing it.</p>
+
+<p>However, augmentation-based approaches introduce their own challenges. The
+choice of augmentations can embed inductive biases into the encoder, and careful
+tuning of the augmentation strategy becomes critical to performance. This has
+motivated a separate line of work rooted in a different idea: masked image
+modelling. The inspiration comes from BERT <a href="#r4">[4]</a> in natural
+language processing, a pretext task in which a language model is trained to
+predict randomly masked tokens in a sequence, with a masking ratio of around
+15%. Since words are discrete tokens, a 15% masking ratio is sufficient; the
+model cannot trivially reconstruct a missing word by interpolating from its
+neighbors. Masked Autoencoders (MAE) <a href="#r5">[5]</a> adapt this idea to
+images. Rather than using convolutional networks, MAE adopts Vision Transformers
+(ViT) <a href="#r6">[6]</a> because their patch-based, non-overlapping
+tokenization of images provides a natural analogue to token sequences in
+language, making it straightforward to mask and reconstruct discrete spatial
+units without the spatial inductive biases baked into CNNs.</p>
+
+<p>Images, however, are continuous signals, and nearby pixels are highly
+correlated, making it easy for a model to reconstruct a masked region simply by
+copying from adjacent patches. To counteract this, MAE uses a significantly
+higher masking ratio of around 75&ndash;80%, forcing the model to reason about
+global image structure rather than relying on local interpolation.</p>
+
+<figure>
+  <img src="../img/ssl-fig2.jpg" width="639" height="367"
+    alt="MAE diagram: an input image split into patches, most of them masked; the visible patches go through an encoder, mask tokens are added back, and a decoder reconstructs the full target image.">
+  <figcaption>Figure 2: Architecture Masked AutoEncoder</figcaption>
+</figure>
+
+<p>As shown in Figure 2, the MAE architecture works as follows: input image
+patches are randomly masked, and only the unmasked patches are passed through
+the encoder. The encoder&rsquo;s output representations are then combined with
+learnable mask tokens and fed into a lightweight decoder, which reconstructs the
+pixel values of the masked patches. Crucially, the decoder is only used during
+pre-training; after training, it is discarded, and the encoder representations
+are used directly for downstream tasks. The pixel-level reconstruction
+objective, while effective, was not universally embraced, as predicting raw
+pixels is a low-level target that may not align well with high-level semantic
+representations. This motivated subsequent work exploring alternative prediction
+targets, most notably the JEPA family of models <a href="#r7">[7]</a>, which
+instead predict representations in a learned latent space rather than
+reconstructing pixels directly.</p>
+
+<figure>
+  <img src="../img/ssl-fig3.jpg" width="1100" height="387"
+    alt="Grid of image triplets: a heavily masked image, the MAE reconstruction, and the original, for scenes such as clocks, a bus, a dog, a cheetah, birds and butterflies.">
+  <figcaption>Figure 3: The masking strategy of the images for the MAE. For each
+    triplet, we show the masked image (left), our MAE reconstruction&dagger;
+    (middle), and the ground-truth (right). The masking ratio is 80%, leaving
+    only 39 out of 196 patches.</figcaption>
+</figure>
+
+<p>Building on the same teacher-student paradigm, the DINO series was developed.
+Here, we focus on DINOv2 <a href="#r3">[3]</a>, which improves upon the original
+DINO. DINOv2 maintains a student encoder and a teacher encoder, where the
+teacher is an EMA of the student. Training involves two complementary
+objectives. The first is the DINO loss, which operates on the <code>[CLS]</code>
+token and aligns the global semantic representations produced by augmented views
+of the student against those of the teacher, capturing image-level semantics.
+The second is the iBOT loss, which operates at the patch level: a subset of
+patches is masked before being fed to the student, while the full unmasked image
+is passed to the teacher. The objective is to minimize the distribution
+divergence between the student&rsquo;s masked patch representations and the
+teacher&rsquo;s corresponding patch representations, encouraging the model to
+learn fine-grained local structure in addition to global semantics.</p>
+
+<p>I-JEPA <a href="#r7">[7]</a> stems from a broader paradigm shift championed
+by Yann LeCun, who has argued that pixel-level prediction objectives such as
+those used in MAE are fundamentally misaligned to learn high-level semantic
+representations. Reconstructing pixels forces the model to spend capacity
+modelling low-level, irrelevant detail like texture and lighting. Instead,
+LeCun's vision is for models to understand the world through compact, abstract
+representation spaces rather than raw signal spaces, a philosophy that underlies
+both I-JEPA and his broader framework for world models. Concretely, I-JEPA moves
+the prediction target from pixel space into a learned latent space. The
+architecture consists of three components: a context encoder, a predictor, and a
+target encoder. The context encoder receives only the unmasked patches of an
+image and produces their representations. The predictor then takes these
+representations and, conditioned on the positional information of the masked
+regions, predicts the latent representations of those masked patches. The target
+encoder, which sees the full unmasked image, produces the ground-truth
+representations that the predictor is trained to match. The optimization
+objective is to minimize the distance between the predictor's output and the
+target encoder's representations for the masked patches. Importantly, the target
+encoder is updated as an EMA of the context encoder consistent with the
+teacher-student design seen in BYOL and DINOv2 to prevent collapse. By operating
+entirely in representation space, I-JEPA avoids the need for hand-crafted
+augmentations and sidesteps the low-level reconstruction bias of
+pixel-prediction methods, learning richer semantic features as a result.</p>
+
+<figure>
+  <img src="../img/ssl-fig4.png" width="566" height="555"
+    alt="I-JEPA diagram: a context block from an image goes through the context encoder; a predictor, given positional tokens, predicts the representations of several target blocks; a target encoder applied to the full image provides the targets, compared with an L2 loss.">
+  <figcaption>Figure 4: I-JEPA. The Image-based Joint-Embedding Predictive
+    Architecture uses a single context block to predict the representations of
+    various target blocks originating from the same image. The context encoder
+    is a Vision Transformer (ViT), which only processes the visible context
+    patches. The predictor is a narrow ViT that takes the context encoder output
+    and, conditioned on positional tokens (shown in color), predicts the
+    representations of a target block at a specific location. The target
+    representations correspond to the outputs of the target-encoder, the weights
+    of which are updated at each iteration via an exponential moving average of
+    the context encoder weights.</figcaption>
+</figure>
+
+<h2>Video SSL models</h2>
+
+<p>Following the same principle as MAE, VideoMAE <a href="#r8">[8]</a> extends
+masked autoencoding to video representation learning. The straightforward
+extension of image masking to video, however, introduces a new challenge: videos
+are not only spatially redundant like images, but also temporally redundant
+frames are densely captured, and semantics change slowly over time. This
+temporal redundancy makes it easy for a model to recover masked content simply
+by copying from adjacent frames, a shortcut that requires little high-level
+understanding. Furthermore, the temporal correlation between frames can cause
+<i>information leakage</i>, where masked spatiotemporal content reappears
+elsewhere in the clip, allowing the model to reconstruct patches without ever
+reasoning about the underlying scene.</p>
+
+<figure>
+  <img src="../img/ssl-fig5.jpg" width="1100" height="279"
+    alt="VideoMAE pipeline: a downsampled video clip, tube masking with an extremely high ratio, the few visible tokens passed through an encoder, then a decoder that reconstructs the target video clip.">
+  <figcaption>Figure 5: Architecture Video Masked Autoencoder</figcaption>
+</figure>
+
+<p>To address this, VideoMAE introduces a <i>tube masking</i> strategy, where
+the same spatial positions are masked consistently across all frames, forming a
+tube through time. This prevents the model from finding unmasked copies of
+masked content in neighboring frames. Combined with an extremely high masking
+ratio of 90&ndash;95% justified by the heightened redundancy of video over
+static images, this design forces the model to develop a genuine understanding
+of spatiotemporal structure rather than relying on local copying. The asymmetric
+encoder-decoder architecture also means that only a small fraction of unmasked
+tokens are processed by the encoder, significantly reducing computational cost
+during pre-training. VideoMAE demonstrates that data quality matters more than
+data quantity; the model achieves strong downstream performance even when
+pre-trained on relatively small datasets.</p>
+
+<p>Following the success of generative masked video models, Yann LeCun&rsquo;s
+team at Meta developed V-JEPA <a href="#r9">[9]</a>, extending the
+joint-embedding predictive architecture from images to video. There are three
+works in the V-JEPA series, each building on and refining the core JEPA idea.
+The underlying philosophy remains consistent with I-JEPA: rather than
+reconstructing pixels, the model learns compact, abstract representations of
+video in latent space. The architecture follows the same three-component design
+a context encoder that sees only the unmasked patches, a predictor that predicts
+the latent representations of the masked patches, and a target encoder that sees
+the complete video and provides the prediction targets.</p>
+
+<p>Where V-JEPA diverges from VideoMAE is in its masking strategy. Rather than
+tube masking, V-JEPA samples several spatially continuous blocks with varying
+aspect ratios and repeats them consistently across the entire temporal dimension
+of the video. The context \(x\) is taken as the complement of these masked
+blocks. Masking large, temporally consistent spatial regions limits information
+leakage caused by both spatial and temporal redundancy, and results in a
+significantly harder prediction task that demands genuine spatiotemporal
+reasoning.</p>
+
+<figure>
+  <img src="../img/ssl-fig7.jpg" width="534" height="454"
+    alt="Two example images (dogs on a bed, a car) with their PCA feature maps from V-JEPA 2, which look noisy, and from V-JEPA 2.1 with the context loss, which look clean and follow object boundaries.">
+  <figcaption>Figure 7: Feature map visualisation (PCA components)</figcaption>
+</figure>
+
+<p>The V-JEPA series has shown progressive improvements on tasks such as action
+recognition and action anticipation. As shown in Figure 7, the feature maps
+produced by V-JEPA 2 <a href="#r10">[10]</a> are noticeably noisy, reflecting
+limitations in representation quality. V-JEPA 2.1 <a href="#r11">[11]</a>
+addresses this through several architectural and objective-level improvements.
+First, it introduces a <i>context loss</i>, extending supervision to the
+unmasked patches in addition to the masked ones, a departure from all prior
+masked modelling works where the loss was applied exclusively on masked regions.
+Second, it introduces modality-specific encoders to better handle the distinct
+characteristics of different input modalities. Third, it adopts a form of deep
+self-supervision, applying the prediction loss not only on the final layer
+embeddings but across multiple intermediate layers of the encoder. Both the model
+and the data were scaled.</p>
+
+<figure>
+  <img src="../img/ssl-fig8.jpg" width="648" height="295"
+    alt="Ablation table: starting from V-JEPA 2, adding context loss, multi-level prediction, vision mix, multi-modal tokenizer, model scaling and cool-down improves IN1K, SSv2, NYU depth and ADE20K results step by step.">
+  <figcaption>Figure 8: Improvements for downstream tasks in V-JEPA 2.1</figcaption>
+</figure>
+
+<p>Together, as demonstrated in Figure 8, each of these additions contributes
+incrementally to improved downstream performance, with V-JEPA 2.1 achieving
+state-of-the-art results across multiple benchmarks.</p>
+
+<p>The evolution of self-supervised visual learning reflects a consistent
+underlying tension: how do we design a training signal that is hard enough to
+force meaningful understanding, but not so prescriptive that it bakes in the
+wrong biases? Contrastive methods answered this by leveraging disagreement
+between samples, but required careful engineering of negatives and
+augmentations. Masked modelling shifted the burden to reconstruction, but
+pixel-level targets proved to be a low-level distraction. The JEPA family
+reframed the question entirely, rather than asking a model to reconstruct the
+world, ask it to predict an abstract representation of it. Each step in this
+progression was not just a new architecture, but a new answer to what a model
+should be trying to learn in the first place. The downstream applications of
+these representations are already becoming tangible, with works like DINO-WM
+<a href="#r12">[12]</a> and LeWorldModel <a href="#r13">[13]</a> demonstrating
+how strong visual SSL representations can serve as the backbone for world models
+capable of planning and reasoning. This blog covers only a slice of this rapidly
+evolving field; the goal has been to trace the thread of how each problem gave
+rise to the next, and how the field has consistently moved toward richer, more
+abstract, and more transferable representations of the visual world.</p>
+
+<h2>References</h2>
+
+<ol class="refs">
+  <li id="r1">[1] Chen, T., Kornblith, S., Norouzi, M., &amp; Hinton, G. (2020). A simple framework for contrastive learning of visual representations. <i>Proceedings of the 37th International Conference on Machine Learning (ICML)</i>, PMLR 119, 1597&ndash;1607. <a href="https://proceedings.mlr.press/v119/chen20j.html">https://proceedings.mlr.press/v119/chen20j.html</a></li>
+  <li id="r2">[2] Grill, J.-B., Strub, F., Altch&eacute;, F., Tallec, C., Richemond, P., Buchatskiy, E., ... &amp; Valko, M. (2020). Bootstrap your own latent: A new approach to self-supervised learning. <i>Advances in Neural Information Processing Systems (NeurIPS)</i>, 33, 21271&ndash;21284.</li>
+  <li id="r3">[3] Oquab, M., Darcet, T., Moutakanni, T., Vo, H., Szafraniec, M., Khalidov, V., ... &amp; Bourdoukan, R. (2023). DINOv2: Learning robust visual features without supervision. <i>Transactions on Machine Learning Research (TMLR)</i>. <a href="https://arxiv.org/abs/2304.07193">https://arxiv.org/abs/2304.07193</a></li>
+  <li id="r4">[4] Devlin, J., Chang, M.-W., Lee, K., &amp; Toutanova, K. (2019). BERT: Pre-training of deep bidirectional transformers for language understanding. <i>Proceedings of NAACL-HLT 2019</i>, 4171&ndash;4186. <a href="https://arxiv.org/abs/1810.04805">https://arxiv.org/abs/1810.04805</a></li>
+  <li id="r5">[5] He, K., Chen, X., Xie, S., Li, Y., Doll&aacute;r, P., &amp; Girshick, R. (2022). Masked autoencoders are scalable vision learners. <i>Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)</i>, 16000&ndash;16009. <a href="https://arxiv.org/abs/2111.06377">https://arxiv.org/abs/2111.06377</a></li>
+  <li id="r6">[6] Dosovitskiy, A., Beyer, L., Kolesnikov, A., Weissenborn, D., Zhai, X., Unterthiner, T., ... &amp; Houlsby, N. (2021). An image is worth 16x16 words: Transformers for image recognition at scale. <i>International Conference on Learning Representations (ICLR)</i>. <a href="https://arxiv.org/abs/2010.11929">https://arxiv.org/abs/2010.11929</a></li>
+  <li id="r7">[7] Assran, M., Duval, Q., Misra, I., Bojanowski, P., Vincent, P., Rabbat, M., ... &amp; Ballas, N. (2023). Self-supervised learning from images with a Joint-Embedding Predictive Architecture. <i>Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)</i>. <a href="https://arxiv.org/abs/2301.08243">https://arxiv.org/abs/2301.08243</a></li>
+  <li id="r8">[8] Tong, Z., Song, Y., Wang, J., &amp; Wang, L. (2022). VideoMAE: Masked autoencoders are data-efficient learners for self-supervised video pre-training. <i>Advances in Neural Information Processing Systems (NeurIPS)</i>, 35. <a href="https://arxiv.org/abs/2203.12602">https://arxiv.org/abs/2203.12602</a></li>
+  <li id="r9">[9] Bardes, A., Garrido, Q., Ponce, J., Chen, X., Rabbat, M., LeCun, Y., Assran, M., &amp; Ballas, N. (2024). V-JEPA: Revisiting feature prediction for learning visual representations from video. <i>Meta AI Technical Report</i>. <a href="https://arxiv.org/abs/2404.08471">https://arxiv.org/abs/2404.08471</a></li>
+  <li id="r10">[10] Assran, M., Bardes, A., Fan, D., Garrido, Q., Howes, R., Komeili, M., Muckley, M., Rizvi, A., Roberts, C., Sinha, K., Zholus, A., et al. (2025). V-JEPA 2: Self-supervised video models enable understanding, prediction and planning. <i>CoRR</i>, abs/2506.09985. <a href="https://doi.org/10.48550/arXiv.2506.09985">https://doi.org/10.48550/arXiv.2506.09985</a></li>
+  <li id="r11">[11] Mur-Labadia, L., Muckley, M., Bar, A., Assran, M., Sinha, K., Rabbat, M., LeCun, Y., Ballas, N., &amp; Bardes, A. (2026). V-JEPA 2.1: Unlocking dense features in video self-supervised learning. <i>arXiv preprint arXiv:2603.14482</i>. <a href="https://arxiv.org/abs/2603.14482">https://arxiv.org/abs/2603.14482</a></li>
+  <li id="r12">[12] Zhou, G., Pan, H., LeCun, Y., &amp; Pinto, L. (2024). DINO-WM: World models on pre-trained visual features enable zero-shot planning. <i>Proceedings of the Conference on Robot Learning (CoRL)</i>, PMLR 267. <a href="https://arxiv.org/abs/2411.04983">https://arxiv.org/abs/2411.04983</a></li>
+  <li id="r13">[13] Maes, L., Le Lidec, Q., Scieur, D., LeCun, Y., &amp; Balestriero, R. (2026). LeWorldModel: Stable end-to-end joint-embedding predictive architecture from pixels. <i>arXiv preprint arXiv:2603.19312</i>. <a href="https://arxiv.org/abs/2603.19312">https://arxiv.org/abs/2603.19312</a></li>
+</ol>
+
+<hr>
+
+<p><a href="../index.html">&larr; Home</a></p>
+
+</body>
+</html>

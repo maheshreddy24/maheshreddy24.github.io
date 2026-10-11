@@ -21,10 +21,10 @@ tt, code, pre { font-family: "Courier New", Courier, monospace; font-size: 0.9em
 pre { padding: 0.6em 0.8em; border: 1px solid #808080; overflow-x: auto; }
 
 img { max-width: 100%; height: auto; }
-figure img { mix-blend-mode: multiply; }
+figure img { display: block; margin: 0 auto; mix-blend-mode: multiply; }
 
 figure { margin: 1.5em 0; }
-figcaption { font-size: 0.9em; font-style: italic; margin-top: 0.3em; }
+figcaption { font-size: 0.9em; font-style: italic; width: fit-content; margin: 0.3em auto 0; }
 
 div.table { overflow-x: auto; margin: 1em 0; }
 table { border-collapse: collapse; }
@@ -33,7 +33,8 @@ th, td { border: 1px solid #808080; padding: 0.3em 0.6em; text-align: left; vert
 .katex { font-size: 1.1em; }
 .katex-display { overflow-x: auto; overflow-y: hidden; padding: 0.2em 0; }
 
-ul.refs li { margin: 0.3em 0; }
+.refs li { margin: 0.3em 0; overflow-wrap: anywhere; }
+ol.refs { list-style: none; padding: 0; }
 
 ul.posts { list-style: none; padding: 0; }
 ul.posts li { margin: 0.4em 0; }
