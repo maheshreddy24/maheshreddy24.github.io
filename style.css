@@ -37,8 +37,8 @@ th, td { border: 1px solid #808080; padding: 0.3em 0.6em; text-align: left; vert
 ol.refs { list-style: none; padding: 0; }
 
 ul.posts { list-style: none; padding: 0; }
-ul.posts li { margin: 0.4em 0; }
-ul.posts tt { margin-right: 1.2em; }
+ul.posts li { margin: 0.7em 0; }
+ul.posts tt { font-size: 1em; margin-right: 1.2em; }
 
 address { font-size: 0.9em; }
 p.note { font-size: 0.85em; }
